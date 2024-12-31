@@ -12,6 +12,10 @@ BOT_NAME = "bargainfinder"
 SPIDER_MODULES = ["bargainfinder.spiders"]
 NEWSPIDER_MODULE = "bargainfinder.spiders"
 
+FEEDS = {
+    'booksdata.json':{'format':'json'}
+}
+
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = "finder (+http://www.yourdomain.com)"
@@ -63,7 +67,9 @@ ROBOTSTXT_OBEY = True
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   "bargainfinder.pipelines.BargainfinderPipeline": 300,
+   "bargainfinder.pipelines.BookscraperPipeline": 300,
+    "bargainfinder.pipelines.SaveToMySQLPipeline": 400,
+
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

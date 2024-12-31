@@ -8,8 +8,9 @@
 from itemadapter import ItemAdapter
 
 
-class BargainfinderPipeline:
+class BookscraperPipeline:
     def process_item(self, item, spider):
+
         adapter = ItemAdapter(item)
 
         ## Strip all whitespaces from strings
@@ -17,8 +18,7 @@ class BargainfinderPipeline:
         for field_name in field_names:
             if field_name != 'description':
                 value = adapter.get(field_name)
-                adapter[field_name] = value.strip()
-
+                adapter[field_name] = value[0].strip()
 
 
         ## Category & Product Type --> switch to lowercase
@@ -69,4 +69,101 @@ class BargainfinderPipeline:
             adapter['stars'] = 4
         elif stars_text_value == "five":
             adapter['stars'] = 5
+
+
         return item
+
+
+import mysql.connector
+
+class SaveToMySQLPipeline:
+
+    def __init__(self):
+        self.conn = mysql.connector.connect(
+            host = 'localhost',
+            user = 'root',
+            password = '2103972@Mysql', #add your password here if you have one set 
+            database = 'books'
+        )
+
+        ## Create cursor, used to execute commands
+        self.cur = self.conn.cursor()
+
+        ## Create books table if none exists
+        self.cur.execute("""
+        CREATE TABLE IF NOT EXISTS books(
+            id int NOT NULL auto_increment, 
+            url VARCHAR(255),
+            title text,
+            upc VARCHAR(255),
+            product_type VARCHAR(255),
+            price_excl_tax DECIMAL,
+            price_incl_tax DECIMAL,
+            tax DECIMAL,
+            price DECIMAL,
+            availability INTEGER,
+            num_reviews INTEGER,
+            stars INTEGER,
+            category VARCHAR(255),
+            description text,
+            PRIMARY KEY (id)
+        )
+        """)
+
+    def process_item(self, item, spider):
+
+        ## Define insert statement
+        self.cur.execute(""" insert into books (
+            url, 
+            title, 
+            upc, 
+            product_type, 
+            price_excl_tax,
+            price_incl_tax,
+            tax,
+            price,
+            availability,
+            num_reviews,
+            stars,
+            category,
+            description
+            ) values (
+                %s,
+                %s,
+                %s,
+                %s,
+                %s,
+                %s,
+                %s,
+                %s,
+                %s,
+                %s,
+                %s,
+                %s,
+                %s
+                )""", (
+            item["url"],
+            item["title"],
+            item["upc"],
+            item["product_type"],
+            item["price_excl_tax"],
+            item["price_incl_tax"],
+            item["tax"],
+            item["price"],
+            item["availability"],
+            item["num_reviews"],
+            item["stars"],
+            item["category"],
+            str(item["description"][0])
+        ))
+
+        # ## Execute insert of data into database
+        self.conn.commit()
+        return item
+
+    
+    def close_spider(self, spider):
+
+        ## Close cursor & connection to database 
+        self.cur.close()
+        self.conn.close()
