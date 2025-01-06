@@ -16,12 +16,21 @@ FEEDS = {
     'booksdata.json':{'format':'json'}
 }
 
+SCRAPEOPS_API_KEY ='3a74f0e3-1ddc-4576-b9a4-3b2d0161ad03'
+SCRAPEOPS_FAKE_BROWSER_HEADER_ENDPOINT ='http://headers.scrapeops.io/v1/browser-headers'
+SCRAPEOPS_FAKE_BROWSER_HEADER_ENABLED = True
+SCRAPEOPS_NUM_RESULTS = 50
+
+
+#  Using a proxy list
+# ROTATING_PROXY_LIST =['8.219.210.64:80','14.102.44.1:34047','47.117.138.120:1080']
+
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = "finder (+http://www.yourdomain.com)"
 
 # Obey robots.txt rules
-ROBOTSTXT_OBEY = True
+ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
@@ -48,15 +57,21 @@ ROBOTSTXT_OBEY = True
 
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
-#SPIDER_MIDDLEWARES = {
+# SPIDER_MIDDLEWARES = {
 #    "finder.middlewares.finderSpiderMiddleware": 543,
-#}
+# }
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
-#DOWNLOADER_MIDDLEWARES = {
-#    "finder.middlewares.finderDownloaderMiddleware": 543,
-#}
+DOWNLOADER_MIDDLEWARES = {
+    #  "bargianfinder.middlewares.BarginfinderDownloaderMiddleware": 543,
+     "bargainfinder.middlewares.ScrapeOpsFakeBrowserHeaderAgentMiddleware": 400,
+    #  Using a proxy list
+    #  "rotating_proxies.middlewares.RotatingProxyMiddleware": 610,
+    #  "rotating_proxies.middlewares.BanDetectionMiddleware": 620,
+
+     
+}
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
@@ -67,8 +82,8 @@ ROBOTSTXT_OBEY = True
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   "bargainfinder.pipelines.BookscraperPipeline": 300,
-    "bargainfinder.pipelines.SaveToMySQLPipeline": 400,
+   "bargainfinder.pipelines.BargainfinderPipeline": 300,
+#    "bargainfinder.pipelines.SaveToMySQLPipeline": 400,
 
 }
 

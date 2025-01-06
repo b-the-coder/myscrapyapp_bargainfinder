@@ -8,9 +8,8 @@
 from itemadapter import ItemAdapter
 
 
-class BookscraperPipeline:
+class BargainfinderPipeline:
     def process_item(self, item, spider):
-
         adapter = ItemAdapter(item)
 
         ## Strip all whitespaces from strings
@@ -18,7 +17,8 @@ class BookscraperPipeline:
         for field_name in field_names:
             if field_name != 'description':
                 value = adapter.get(field_name)
-                adapter[field_name] = value[0].strip()
+                adapter[field_name] = value.strip()
+
 
 
         ## Category & Product Type --> switch to lowercase
@@ -69,27 +69,22 @@ class BookscraperPipeline:
             adapter['stars'] = 4
         elif stars_text_value == "five":
             adapter['stars'] = 5
-
-
         return item
-
 
 import mysql.connector
 
-class SaveToMySQLPipeline:
 
+class SaveToMySQLPipeline:
     def __init__(self):
         self.conn = mysql.connector.connect(
             host = 'localhost',
             user = 'root',
-            password = '2103972@Mysql', #add your password here if you have one set 
+            password ='2103972@Mysql',
             database = 'books'
         )
-
-        ## Create cursor, used to execute commands
         self.cur = self.conn.cursor()
 
-        ## Create books table if none exists
+    ## Create books table if none exists
         self.cur.execute("""
         CREATE TABLE IF NOT EXISTS books(
             id int NOT NULL auto_increment, 
@@ -109,7 +104,6 @@ class SaveToMySQLPipeline:
             PRIMARY KEY (id)
         )
         """)
-
     def process_item(self, item, spider):
 
         ## Define insert statement
@@ -156,12 +150,13 @@ class SaveToMySQLPipeline:
             item["category"],
             str(item["description"][0])
         ))
-
-        # ## Execute insert of data into database
+         # ## Execute insert of data into database
         self.conn.commit()
         return item
 
-    
+
+
+
     def close_spider(self, spider):
 
         ## Close cursor & connection to database 
