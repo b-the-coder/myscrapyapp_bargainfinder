@@ -1,19 +1,21 @@
 import matplotlib.pyplot as plt 
 import csv 
   
-x = [] 
-y = [] 
+prices = []
   
-with open('biostats.csv','r') as csvfile: 
+with open('adidashoodies.csv','r') as csvfile: 
     plots = csv.reader(csvfile, delimiter = ',') 
-      
-    for row in plots: 
-        x.append(row[0]) 
-        y.append(int(row[2])) 
+    print(plots) 
+    next(plots)
+    for row  in plots:
+        price = int(row[1].replace('$', ''))
+        prices.append(price)
+         
   
-plt.bar(x, y, color = 'g', width = 0.72, label = "Age") 
-plt.xlabel('Names') 
-plt.ylabel('Ages') 
-plt.title('Ages of different persons') 
-plt.legend() 
+plt.hist(prices, bins= 10, color = 'g') 
+plt.xlabel('Price Range(USD)') 
+plt.ylabel('Product Numbers') 
+plt.title('Adidas Women Hoodies Price Distrubute') 
+plt.grid(True)
+plt.tight_layout()
 plt.show() 
