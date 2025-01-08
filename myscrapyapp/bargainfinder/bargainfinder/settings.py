@@ -16,6 +16,8 @@ FEEDS = {
     'booksdata.json':{'format':'json'}
 }
 
+
+
 SCRAPEOPS_API_KEY ='3a74f0e3-1ddc-4576-b9a4-3b2d0161ad03'
 SCRAPEOPS_FAKE_BROWSER_HEADER_ENDPOINT ='http://headers.scrapeops.io/v1/browser-headers'
 SCRAPEOPS_FAKE_BROWSER_HEADER_ENABLED = True
@@ -64,13 +66,20 @@ ROBOTSTXT_OBEY = False
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
-    #  "bargianfinder.middlewares.BarginfinderDownloaderMiddleware": 543,
+    #  "bargainfinder.middlewares.BargainfinderDownloaderMiddleware": 543,
      "bargainfinder.middlewares.ScrapeOpsFakeBrowserHeaderAgentMiddleware": 400,
+    #  "bargainfinder.middlewares.ScrapeOpsFakeUserAgentMiddleware": 400,
     #  Using a proxy list
     #  "rotating_proxies.middlewares.RotatingProxyMiddleware": 610,
-    #  "rotating_proxies.middlewares.BanDetectionMiddleware": 620,
+    #  "rotating_proxies.middlewares.BanDetectionMiddleware": 620, 
+}
 
-     
+
+DOWNLOAD_HANDLERS = {
+    'http': ('scrapy_fingerprint.fingerprint_download_handler.'
+             'FingerprintDownloadHandler'),
+    'https': ('scrapy_fingerprint.fingerprint_download_handler.'
+              'FingerprintDownloadHandler'),
 }
 
 # Enable or disable extensions
@@ -82,7 +91,7 @@ DOWNLOADER_MIDDLEWARES = {
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   "bargainfinder.pipelines.BargainfinderPipeline": 300,
+#    "bargainfinder.pipelines.BargainfinderPipeline": 300,
 #    "bargainfinder.pipelines.SaveToMySQLPipeline": 400,
 
 }
